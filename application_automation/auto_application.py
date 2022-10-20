@@ -1,9 +1,6 @@
 import os
 import csv
 import docx
-import configparser
-import tkinter as tk
-from tkinter import filedialog
 
 
 def add_application(position, employer, date_applied):
@@ -29,22 +26,11 @@ def add_application(position, employer, date_applied):
         writer = csv.DictWriter(csvfile, field_names)
         writer.writerow({'Jobs': position, 'Employer': employer, 'Phone Number': None, 'Applied?': date_applied, 'Contacted?': None, 'Interview?': None, 'Offer?': None})
     
+
 #Boolean for program continuation in a while loop.
-##print(os.path.dirname(__file__))
-
 cont_program = True
-root = tk.Tk()
-root.withdraw() # Prevents an empty tkinter window from opening
-config_file = configparser.ConfigParser() #Create configparser object
-
-
-## Create a cconfig file. If there is not a config file, prompt the user to pick a directory to store work files. ##
-print("Pick a directory to store job files:")
-
-#Picks a file path for the program to operate from
-file_path = filedialog.askdirectory()
-
-print('You have selected: ', file_path, '\n')
+file_path = os.path.dirname(__file__)
+print(file_path)
 os.chdir(file_path)
 
 #Checks if job applications folder is present
@@ -63,6 +49,7 @@ if not os.path.isfile(os.getcwd() + "\\jobs_applied.csv"):
     with open('jobs_applied.csv', 'w') as file:
         writer = csv.writer(file)
         writer.writerow(["Jobs", 'Employer', 'Phone Number', 'Applied?', 'Contacted?', 'Interview?', 'Offer?'])
+
 
 #Main body of the UX
 while cont_program == True:
