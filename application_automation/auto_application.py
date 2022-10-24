@@ -3,7 +3,7 @@ import csv
 import docx
 
 
-def add_application(position, employer, date_applied):
+def add_application(position, employer, phone_number, date_applied):
 
     os.chdir(os.getcwd() + '\job applications')
     if not os.path.exists(os.getcwd() + '\\' + employer):
@@ -21,17 +21,25 @@ def add_application(position, employer, date_applied):
     #This returns the CWD to the home directory of the program once the additions are made.
     os.chdir(file_path)
 
-    with open('jobs_applied.csv', 'w') as csvfile:
-        field_names = ["Jobs", 'Employer', 'Phone Number', 'Applied?', 'Contacted?', 'Interview?', 'Offer?']
-        writer = csv.DictWriter(csvfile, field_names)
-        writer.writerow({'Jobs': position, 'Employer': employer, 'Phone Number': None, 'Applied?': date_applied, 'Contacted?': None, 'Interview?': None, 'Offer?': None})
-    
+    #Checks to see if jobs_applied csv is present and creates one if not.
+    if not os.path.isfile(os.getcwd() + "\\jobs_applied.csv"):
+        print("Creating new jobs applied csv.")
+        with open('jobs_applied.csv', 'w', newline="") as file:
+            writer = csv.DictWriter(file, header_names)
+            writer.writeheader()
+    try:
+        with open('jobs_applied.csv', 'a', newline="") as csv_file:
+            writer = csv.DictWriter(csv_file, header_names)
+            writer.writerow({"Jobs": position, 'Employer': employer, 'Phone Number': phone_number, 'Date': date_applied, 'Contacted?': None, 'Interview?': None, 'Offer?': None})
+    except PermissionError:
+        print('You must close the excel file before adding a new entry!\n')
 
 #Boolean for program continuation in a while loop.
 cont_program = True
 file_path = os.path.dirname(__file__)
 print(file_path)
 os.chdir(file_path)
+header_names = ["Jobs", 'Employer', 'Phone Number', 'Date', 'Contacted?', 'Interview?', 'Offer?']
 
 #Checks if job applications folder is present
 if not os.path.exists(os.getcwd() + "\job applications"):
@@ -42,13 +50,6 @@ if not os.path.exists(os.getcwd() + "\job applications"):
 if not os.path.exists(os.getcwd() + '\\resumes'):
     print('Creating "Resumes" folder.')
     os.mkdir('resumes')
-#Checks to see if jobs_applied csv is present and creates one if not.
-#***UNDER CONSTRUCTION***
-if not os.path.isfile(os.getcwd() + "\\jobs_applied.csv"):
-    print("Creating new jobs applied csv.")
-    with open('jobs_applied.csv', 'w') as file:
-        writer = csv.writer(file)
-        writer.writerow(["Jobs", 'Employer', 'Phone Number', 'Applied?', 'Contacted?', 'Interview?', 'Offer?'])
 
 
 #Main body of the UX
@@ -57,10 +58,13 @@ while cont_program == True:
     
 
     if user_in.lower() == 'a':
+        print('\nAny information which you do not have can be entered manually by entering "D" in the main menu.')
+        print("Ensure that Excel is closed before entering a new application!\n")
         position = input("What is the position called?\n>>> ")
         employer = input("What is the employer called?\n>>> ")
+        phone_number = input("What is the employer's phone number?\n>>> ")
         date_applied = input("What is the application date?\n>>> ")
-        add_application(position, employer, date_applied)
+        add_application(position, employer, phone_number, date_applied)
 
     elif user_in.lower() == 'b':
         print('Opening Job Applications folder...\n')
@@ -78,6 +82,5 @@ while cont_program == True:
         cont_program = False
         break
     
-    #This always prints unless x is typed. I need to replace the above ifs with elifs.
     else:
         print('Invalid input!\n')
